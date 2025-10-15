@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This website is lovingly crafted for the most beautiful and cutest girl in my life ❤️✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            touch-action: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            display: flex;
+            background: #111;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        #night-sky {
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100vw; 
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+        
+        #moon {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30px 30px, #fffbe6 70%, #e6e6e6 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px 15px #fffbe6, 0 0 80px 30px #fffbe6;
+            z-index: 2;
+        }
+        
+        @media (max-width: 768px) {
+            #moon {
+                width: 60px;
+                height: 60px;
+                top: 20px;
+                right: 20px;
+            }
+        }
+        
+        #stars, #falling-stars {
+            position: absolute;
+            top: 0; 
+            left: 0;
+            width: 100vw; 
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+        }
+        
+        #drag-container, #spin-container {
+            position: relative;
+            display: flex;
+            margin: auto;
+            transform-style: preserve-3d;
+            transform: rotateX(-10deg);
+        }
+        
+        #drag-container img, #drag-container video {
+            transform-style: preserve-3d;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            line-height: 200px;
+            font-size: 50px;
+            text-align: center;
+            box-shadow: 0 0 8px #fff;
+            -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+            border-radius: 10px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        
+        #drag-container img:hover, #drag-container video:hover {
+            box-shadow: 0 0 15px #fffd;
+            -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0007);
+            transform: scale(1.05);
+        }
+        
+        #drag-container p {
+            font-family: 'Dancing Script', cursive;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%,-50%) rotateX(90deg);
+            color: #fff;
+            font-size: 1.8rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        @media (max-width: 768px) {
+            #drag-container p {
+                font-size: 1.4rem;
+                width: 90%;
+            }
+        }
+        
+        #ground {
+            width: 900px;
+            height: 900px;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%,-50%) rotateX(90deg);
+            background: radial-gradient(center center, farthest-side, #9993, transparent);
+        }
+        
+        /* Beautiful Play Button Styles */
+        .music-player {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .play-btn-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-btn-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.6),
+                        0 0 60px rgba(102, 126, 234, 0.4),
+                        inset 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-btn-outer:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.8),
+                        0 0 80px rgba(102, 126, 234, 0.6),
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .play-btn-inner {
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 20px solid #667eea;
+            margin-left: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .playing .play-icon {
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: 
+                linear-gradient(90deg, #667eea 33%, transparent 33%, transparent 66%, #667eea 66%);
+            margin-left: 0;
+        }
+        
+        .music-waves {
+            display: flex;
+            gap: 4px;
+            align-items: end;
+            height: 30px;
+            margin-top: 10px;
+        }
+        
+        .wave {
+            width: 4px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+        
+        .wave:nth-child(2) { animation-delay: 0.2s; height: 60%; }
+        .wave:nth-child(3) { animation-delay: 0.4s; height: 80%; }
+        .wave:nth-child(4) { animation-delay: 0.6s; height: 70%; }
+        .wave:nth-child(5) { animation-delay: 0.8s; height: 50%; }
+        
+        .music-text {
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+            opacity: 0.9;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes wave {
+            0%, 100% { height: 40%; }
+            50% { height: 90%; }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4081;
+            transform: rotate(45deg);
+            animation: float 6s ease-in-out infinite;
+            z-index: 5;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: #ff4081;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(45deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(45deg);
+            }
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+        
+        @keyframes spinRevert {
+            from {
+                transform: rotateY(360deg);
+            }
+            to {
+                transform: rotateY(0deg);
+            }
+        }
+        
+        .message-container {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            padding: 0 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .message-container {
+                font-size: 1.2rem;
+                bottom: 10px;
+            }
+            
+            .music-player {
+                top: 20px;
+                left: 20px;
+            }
+            
+            .play-btn-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .music-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Beautiful Music Player -->
+    <div class="music-player" id="music-player">
+        <div class="play-btn-container">
+            <div class="play-btn-outer" id="play-button">
+                <div class="play-btn-inner">
+                    <div class="play-icon" id="play-icon"></div>
+                </div>
+            </div>
+        </div>
+        <div class="music-waves" id="music-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+        <div class="music-text">Play Our Song</div>
+    </div>
+
+    <div id="night-sky">
+        <audio id="background-music" loop>
+            <source src="song.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div id="moon"></div>
+        <canvas id="stars"></canvas>
+        <canvas id="falling-stars"></canvas>
+    </div>
+
+    <div id="drag-container">
+        <div id="spin-container">
+            <img src="1.jpg" alt="Beautiful memory">
+            <img src="9.jpg" alt="Beautiful memory">
+            <img src="3.jpg" alt="Beautiful memory">
+            <img src="5.jpg" alt="Beautiful memory">
+            <img src="6.jpg" alt="Beautiful memory">
+            <img src="7.jpg" alt="Beautiful memory">
+            <img src="8.jpg" alt="Beautiful memory">
+            <img src="2.jpg" alt="Beautiful memory">
+            <img src="4.jpg" alt="Beautiful memory">
+            <p>Tumhari muskaan woh chaand hai jo andheron ko bhi roshan kar de... 🌙✨</p>
+        </div>
+        <div id="ground"></div>
+    </div>
+    
+    <div class="message-container">
+        Made with ❤️ for the most beautiful girl in the world
+    </div>
+
+    <script>
+        // Audio handling with beautiful play button
+        const audio = document.getElementById('background-music');
+        const playButton = document.getElementById('play-button');
+        const playIcon = document.getElementById('play-icon');
+        const musicWaves = document.getElementById('music-waves');
+        const musicPlayer = document.getElementById('music-player');
+        let isPlaying = false;
+        let audioStarted = false;
+
+        // Function to start audio
+        function startAudio() {
+            if (audioStarted) return;
+            
+            audio.play().then(() => {
+                console.log("Audio started successfully");
+                audioStarted = true;
+                isPlaying = true;
+                updatePlayButton();
+            }).catch(error => {
+                console.log("Auto-play failed, waiting for user interaction:", error);
+                // Show play button if auto-play fails
+                musicPlayer.style.display = 'flex';
+            });
+        }
+
+        // Update play button appearance
+        function updatePlayButton() {
+            if (isPlaying) {
+                playButton.classList.add('playing');
+                musicWaves.style.display = 'flex';
+                document.querySelector('.music-text').textContent = 'Now Playing';
+            } else {
+                playButton.classList.remove('playing');
+                musicWaves.style.display = 'none';
+                document.querySelector('.music-text').textContent = 'Play Our Song';
+            }
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            if (!audioStarted) {
+                startAudio();
+                return;
+            }
+            
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play();
+                isPlaying = true;
+            }
+            updatePlayButton();
+        }
+
+        // Try to start audio immediately (works in some browsers)
+        startAudio();
+
+        // Try to start audio when page is fully loaded
+        window.addEventListener('load', startAudio);
+
+        // Start audio on any user interaction
+        document.body.addEventListener('click', function() {
+            startAudio();
+        });
+
+        document.body.addEventListener('touchstart', function() {
+            startAudio();
+        });
+
+        document.body.addEventListener('keydown', function() {
+            startAudio();
+        });
+
+        // Play button click handler
+        playButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            togglePlay();
+        });
+
+        // Responsive variables
+        let radius, imgWidth, imgHeight;
+        
+        function setDimensions() {
+            if (window.innerWidth <= 768) {
+                // Mobile dimensions
+                radius = 180;
+                imgWidth = 90;
+                imgHeight = 130;
+            } else {
+                // Desktop dimensions
+                radius = 240;
+                imgWidth = 120;
+                imgHeight = 170;
+            }
+            
+            // Apply dimensions
+            ospin.style.width = imgWidth + "px";
+            ospin.style.height = imgHeight + "px";
+            ground.style.width = radius * 3 + "px";
+            ground.style.height = radius * 3 + "px";
+        }
+        
+        // Starry night background
+        const starCanvas = document.getElementById('stars');
+        const ctx = starCanvas.getContext('2d');
+        let W = window.innerWidth, H = window.innerHeight;
+        starCanvas.width = W; 
+        starCanvas.height = H;
+        
+        let stars = [];
+        for(let i = 0; i < 150; i++) {
+            stars.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                r: Math.random() * 1.5 + 0.5,
+                alpha: Math.random(),
+                dx: Math.random() * 0.02 + 0.01
+            });
+        }
+        
+        function drawStars() {
+            ctx.clearRect(0, 0, W, H);
+            for(let s of stars) {
+                ctx.save();
+                ctx.globalAlpha = 0.7 + 0.3 * Math.sin(s.alpha);
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+                ctx.fillStyle = "#fff";
+                ctx.shadowColor = "#fff";
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.restore();
+                s.alpha += s.dx;
+            }
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+        
+        // Falling stars
+        const fallCanvas = document.getElementById('falling-stars');
+        const fctx = fallCanvas.getContext('2d');
+        fallCanvas.width = W; 
+        fallCanvas.height = H;
+        
+        let fallingStars = [];
+        function spawnFallingStar() {
+            fallingStars.push({
+                x: Math.random() * W,
+                y: -10,
+                len: Math.random() * 80 + 40,
+                speed: Math.random() * 15 + 2,
+                alpha: Math.random() * 0.5 + 0.5
+            });
+        }
+        setInterval(spawnFallingStar, 800);
+        
+        function drawFallingStars() {
+            fctx.clearRect(0, 0, W, H);
+            for(let i = fallingStars.length - 1; i >= 0; i--) {
+                let fs = fallingStars[i];
+                fctx.save();
+                fctx.globalAlpha = fs.alpha;
+                fctx.strokeStyle = "#fff";
+                fctx.lineWidth = 2;
+                fctx.beginPath();
+                fctx.moveTo(fs.x, fs.y);
+                fctx.lineTo(fs.x - fs.len * 0.3, fs.y + fs.len);
+                fctx.stroke();
+                fctx.restore();
+                fs.x -= fs.len * 0.013;
+                fs.y += fs.speed;
+                fs.alpha -= 0.003;
+                if(fs.y > H || fs.alpha < 0.05) fallingStars.splice(i, 1);
+            }
+            requestAnimationFrame(drawFallingStars);
+        }
+        drawFallingStars();
+        
+        // Create floating hearts
+        // function createHearts() {
+        //     const heartCount = 15;
+        //     for (let i = 0; i < heartCount; i++) {
+        //         const heart = document.createElement('div');
+        //         heart.className = 'heart';
+        //         heart.style.left = Math.random() * 100 + 'vw';
+        //         heart.style.top = Math.random() * 100 + 'vh';
+        //         heart.style.animationDelay = Math.random() * 5 + 's';
+        //         heart.style.opacity = Math.random() * 0.5 + 0.3;
+        //         document.body.appendChild(heart);
+        //     }
+        // }
+        
+        // 3D Carousel
+        var autoRotate = true;
+        var rotateSpeed = -60;
+        var odrag = document.getElementById('drag-container');
+        var ospin = document.getElementById('spin-container');
+        var aImg = ospin.getElementsByTagName('img');
+        var aVid = ospin.getElementsByTagName('video');
+        var aEle = [...aImg, ...aVid];
+        var ground = document.getElementById('ground');
+        
+        // Initialize dimensions
+        setDimensions();
+        
+        function init(delayTime) {
+            for (var i = 0; i < aEle.length; i++) {
+                aEle[i].style.transform = "rotateY(" + (i * (360 / aEle.length)) + "deg) translateZ(" + radius + "px)";
+                aEle[i].style.transition = "transform 1s";
+                aEle[i].style.transitionDelay = delayTime || (aEle.length - i) / 4 + "s";
+            }
+        }
+        
+        function applyTranform(obj) {
+            if(tY > 180) tY = 180;
+            if(tY < 0) tY = 0;
+            obj.style.transform = "rotateX(" + (-tY) + "deg) rotateY(" + (tX) + "deg)";
+        }
+        
+        function playSpin(yes) {
+            ospin.style.animationPlayState = (yes ? 'running' : 'paused');
+        }
+        
+        var sX, sY, nX, nY, desX = 0,
+            desY = 0,
+            tX = 0,
+            tY = 10;
+        
+        // Auto spin
+        if (autoRotate) {
+            var animationName = (rotateSpeed > 0 ? 'spin' : 'spinRevert');
+            ospin.style.animation = `${animationName} ${Math.abs(rotateSpeed)}s infinite linear`;
+        }
+        
+        // Setup events
+        document.onpointerdown = function (e) {
+            clearInterval(odrag.timer);
+            e = e || window.event;
+            var sX = e.clientX,
+                sY = e.clientY;
+            
+            this.onpointermove = function (e) {
+                e = e || window.event;
+                var nX = e.clientX,
+                    nY = e.clientY;
+                desX = nX - sX;
+                desY = nY - sY;
+                tX += desX * 0.1;
+                tY += desY * 0.1;
+                applyTranform(odrag);
+                sX = nX;
+                sY = nY;
+            };
+            
+            this.onpointerup = function (e) {
+                odrag.timer = setInterval(function () {
+                    desX *= 0.95;
+                    desY *= 0.95;
+                    tX += desX * 0.1;
+                    tY += desY * 0.1;
+                    applyTranform(odrag);
+                    playSpin(false);
+                    if (Math.abs(desX) < 0.5 && Math.abs(desY) < 0.5) {
+                        clearInterval(odrag.timer);
+                        playSpin(true);
+                    }
+                }, 17);
+                this.onpointermove = this.onpointerup = null;
+            };
+            
+            return false;
+        };
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            starCanvas.width = W;
+            starCanvas.height = H;
+            fallCanvas.width = W;
+            fallCanvas.height = H;
+            
+            // Update carousel dimensions
+            setDimensions();
+            init(1);
+        });
+        
+        // Initialize after a short delay
+        setTimeout(function() {
+            init();
+            createHearts();
+        }, 1000);
+    </script>
+</body>
+</html>
